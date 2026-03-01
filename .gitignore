@@ -1,0 +1,8 @@
+# Bridges
+bridges/**/dist/
+bridges/**/config/config.xml
+bridges/**/config/*.secret.*
+bridges/**/config/*.local.*
+
+# Logs
+*.log
