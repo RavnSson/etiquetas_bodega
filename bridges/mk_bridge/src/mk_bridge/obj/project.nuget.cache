@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "c7F5LgtGnqw=",
+  "success": true,
+  "projectFilePath": "D:\\workspace\\etiquetas_bodega\\bridges\\mk_bridge\\src\\mk_bridge\\mk_bridge.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ravnsson\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.24\\microsoft.net.illink.tasks.8.0.24.nupkg.sha512",
+    "C:\\Users\\ravnsson\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\8.0.24\\microsoft.netcore.app.runtime.win-x64.8.0.24.nupkg.sha512",
+    "C:\\Users\\ravnsson\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\8.0.24\\microsoft.windowsdesktop.app.runtime.win-x64.8.0.24.nupkg.sha512",
+    "C:\\Users\\ravnsson\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\8.0.24\\microsoft.aspnetcore.app.runtime.win-x64.8.0.24.nupkg.sha512"
+  ],
+  "logs": []
+}

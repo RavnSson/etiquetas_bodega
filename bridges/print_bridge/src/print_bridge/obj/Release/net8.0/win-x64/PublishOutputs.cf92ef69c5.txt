@@ -1,0 +1,2 @@
+D:\workspace\etiquetas_bodega\bridges\print_bridge\dist\print_bridge.pdb
+D:\workspace\etiquetas_bodega\bridges\print_bridge\dist\print_bridge.exe

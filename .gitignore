@@ -1,8 +1,16 @@
-# Bridges
+# Flutter builds (monorepo level)
+apps/flutter_app/etiquetas_bodega/build/
+apps/flutter_app/etiquetas_bodega/.dart_tool/
+apps/flutter_app/etiquetas_bodega/.flutter-plugins
+apps/flutter_app/etiquetas_bodega/.flutter-plugins-dependencies
+
+# Bridges binaries
 bridges/**/dist/
+
+# Sensitive configs
 bridges/**/config/config.xml
-bridges/**/config/*.secret.*
 bridges/**/config/*.local.*
+bridges/**/config/*.secret.*
 
 # Logs
 *.log
