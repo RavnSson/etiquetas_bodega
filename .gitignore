@@ -1,16 +1,45 @@
-# Flutter builds (monorepo level)
-apps/flutter_app/etiquetas_bodega/build/
-apps/flutter_app/etiquetas_bodega/.dart_tool/
-apps/flutter_app/etiquetas_bodega/.flutter-plugins
-apps/flutter_app/etiquetas_bodega/.flutter-plugins-dependencies
+# ======================
+# Flutter
+# ======================
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.pub-cache/
 
-# Bridges binaries
+# ======================
+# .NET
+# ======================
+**/bin/
+**/obj/
+*.exe
+*.dll
+*.pdb
+*.deps.json
+*.runtimeconfig.json
+singlefilehost.exe
+
+# ======================
+# VSCode
+# ======================
+**/.vscode/
+
+# ======================
+# Bridges output
+# ======================
 bridges/**/dist/
+dist_release/
 
+# ======================
+# Logs
+# ======================
+logs/
+*.log
+
+# ======================
 # Sensitive configs
+# ======================
 bridges/**/config/config.xml
 bridges/**/config/*.local.*
 bridges/**/config/*.secret.*
-
-# Logs
-*.log
+apps/**/app_config.json
