@@ -3,8 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../features/catalog/logic/catalog_cubit.dart';
 import '../features/catalog/logic/catalog_state.dart';
-import '../features/print/logic/print_cubit.dart';
-import '../features/print/logic/print_state.dart';
+
+import '../ui/widgets/redsalud_app_bar.dart';
+import '../ui/widgets/catalog_search_field.dart';
+import '../ui/widgets/print_message_banner.dart';
+import '../ui/widgets/catalog_list.dart';
 
 class CatalogScreen extends StatefulWidget {
   const CatalogScreen({super.key});
@@ -19,7 +22,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<CatalogCubit>().load();
+    //context.read<CatalogCubit>().load();
   }
 
   @override
@@ -30,100 +33,151 @@ class _CatalogScreenState extends State<CatalogScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Etiquetas Bodega'),
-        actions: [
-          IconButton(
-            onPressed: () => context.read<CatalogCubit>().load(),
-            icon: const Icon(Icons.refresh),
-            tooltip: 'Recargar catálogo',
-          ),
-        ],
+      appBar: RedSaludAppBar(
+        title: 'Etiquetas Bodega',
+        onRefresh: () => context.read<CatalogCubit>().load(),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: TextField(
-              controller: _search,
-              onChanged: (v) => context.read<CatalogCubit>().setQuery(v),
-              decoration: const InputDecoration(
-                labelText: 'Buscar (código o nombre)',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+      body: BlocBuilder<CatalogCubit, CatalogState>(
+        builder: (context, state) {
+          // Anchos razonables para desktop
+          const rightPanelWidth = 460.0;
+
+          return Row(
+            children: [
+              // Panel izquierdo (búsqueda + mensajes + lista)
+              Expanded(
+                child: Column(
+                  children: [
+                    CatalogSearchField(
+                      controller: _search,
+                      onChanged: (v) =>
+                          context.read<CatalogCubit>().setQuery(v),
+                    ),
+                    const PrintMessageBanner(),
+                    const SizedBox(height: 8),
+                    Expanded(child: _buildLeftContent(state)),
+                  ],
+                ),
               ),
+
+              // Separador vertical
+              Container(width: 1, color: theme.dividerColor),
+
+              // Panel derecho (preview / acciones)
+              SizedBox(
+                width: rightPanelWidth,
+                child: _PreviewPanelPlaceholder(
+                  selectedName: state.selected?.name,
+                  selectedCode: state.selected?.code,
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildLeftContent(CatalogState state) {
+    if (state.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (state.error != null) {
+      return Center(child: Text(state.error!, textAlign: TextAlign.center));
+    }
+
+    final items = state.filtered;
+    if (items.isEmpty) {
+      return const Center(child: Text('Sin resultados.'));
+    }
+
+    return CatalogList(items: items, selected: state.selected);
+  }
+}
+
+class _PreviewPanelPlaceholder extends StatelessWidget {
+  final String? selectedName;
+  final String? selectedCode;
+
+  const _PreviewPanelPlaceholder({
+    required this.selectedName,
+    required this.selectedCode,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Vista previa',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w700,
             ),
-          ),
-          BlocBuilder<PrintCubit, PrintState>(
-            builder: (context, ps) {
-              final msg = ps.error ?? ps.lastOk;
-              if (msg == null) return const SizedBox.shrink();
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Text(msg, maxLines: 2, overflow: TextOverflow.ellipsis),
-              );
-            },
           ),
           const SizedBox(height: 8),
+
           Expanded(
-            child: BlocBuilder<CatalogCubit, CatalogState>(
-              builder: (context, state) {
-                if (state.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (state.error != null) {
-                  return Center(
-                    child: Text(state.error!, textAlign: TextAlign.center),
-                  );
-                }
-
-                final items = state.filtered;
-                if (items.isEmpty) {
-                  return const Center(child: Text('Sin resultados.'));
-                }
-
-                return ListView.separated(
-                  itemCount: items.length,
-                  separatorBuilder: (_, _) => const Divider(height: 1),
-                  itemBuilder: (context, i) {
-                    final it = items[i];
-                    return ListTile(
-                      title: Text(
-                        it.name,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+            child: Container(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                border: Border.all(color: theme.dividerColor),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.all(12),
+              child: (selectedCode == null)
+                  ? Center(
+                      child: Text(
+                        'Selecciona un ítem para ver la etiqueta.',
+                        style: theme.textTheme.bodyMedium,
+                        textAlign: TextAlign.center,
                       ),
-                      subtitle: Text('${it.code} • ${it.source}'),
-                      trailing: BlocBuilder<PrintCubit, PrintState>(
-                        builder: (context, ps) {
-                          final busy = ps.isPrinting;
-                          return IconButton(
-                            onPressed: busy
-                                ? null
-                                : () => context.read<PrintCubit>().printNow(
-                                    code: it.code,
-                                    name: it.name,
-                                    copies: 1,
-                                  ),
-                            icon: busy
-                                ? const SizedBox(
-                                    width: 18,
-                                    height: 18,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : const Icon(Icons.print),
-                            tooltip: 'Imprimir',
-                          );
-                        },
-                      ),
-                    );
-                  },
-                );
-              },
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          selectedName ?? '',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Código: $selectedCode',
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                        const Spacer(),
+                        Text(
+                          'Preview barcode (siguiente paso)',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.textTheme.bodySmall?.color?.withValues(
+                              alpha: 0.7,
+                            ),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
             ),
+          ),
+
+          const SizedBox(height: 12),
+
+          // Acciones futuras (por ahora placeholder)
+          ElevatedButton.icon(
+            onPressed: selectedCode == null ? null : () {},
+            icon: const Icon(Icons.print),
+            label: const Text('Imprimir'),
           ),
         ],
       ),

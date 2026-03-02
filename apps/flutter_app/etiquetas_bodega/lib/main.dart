@@ -31,13 +31,11 @@ class EtiquetasBodegaApp extends StatelessWidget {
         BlocProvider(
           create: (_) => CatalogCubit(CatalogBridgeDatasource(config)),
         ),
-        BlocProvider(
-          create: (_) => PrintCubit(PrintBridgeDatasource()),
-        ),
+        BlocProvider(create: (_) => PrintCubit(PrintBridgeDatasource())),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: AppTheme.dark(),
+        theme: AppTheme.redSaludLight(),
         home: const CatalogScreen(),
       ),
     );
