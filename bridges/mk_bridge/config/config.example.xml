@@ -1,0 +1,13 @@
+<parametros>
+  <ip>127.0.0.1</ip>
+  <mdb>NOMBRE_BD</mdb>
+
+  <sql>
+    SELECT
+      CODARTICULO,
+      NOMARTICULO
+    FROM MATERIALBODEGA WITH (NOLOCK)
+    WHERE ESTADO = 'ACTIVO'
+    ORDER BY CODARTICULO
+  </sql>
+</parametros>

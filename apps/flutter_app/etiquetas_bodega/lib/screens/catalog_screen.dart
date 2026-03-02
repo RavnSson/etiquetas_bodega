@@ -61,11 +61,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
               if (msg == null) return const SizedBox.shrink();
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Text(
-                  msg,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                child: Text(msg, maxLines: 2, overflow: TextOverflow.ellipsis),
               );
             },
           ),
@@ -78,10 +74,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                 }
                 if (state.error != null) {
                   return Center(
-                    child: Text(
-                      state.error!,
-                      textAlign: TextAlign.center,
-                    ),
+                    child: Text(state.error!, textAlign: TextAlign.center),
                   );
                 }
 
@@ -92,11 +85,15 @@ class _CatalogScreenState extends State<CatalogScreen> {
 
                 return ListView.separated(
                   itemCount: items.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  separatorBuilder: (_, _) => const Divider(height: 1),
                   itemBuilder: (context, i) {
                     final it = items[i];
                     return ListTile(
-                      title: Text(it.name, maxLines: 2, overflow: TextOverflow.ellipsis),
+                      title: Text(
+                        it.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       subtitle: Text('${it.code} • ${it.source}'),
                       trailing: BlocBuilder<PrintCubit, PrintState>(
                         builder: (context, ps) {
@@ -105,15 +102,17 @@ class _CatalogScreenState extends State<CatalogScreen> {
                             onPressed: busy
                                 ? null
                                 : () => context.read<PrintCubit>().printNow(
-                                      code: it.code,
-                                      name: it.name,
-                                      copies: 1,
-                                    ),
+                                    code: it.code,
+                                    name: it.name,
+                                    copies: 1,
+                                  ),
                             icon: busy
                                 ? const SizedBox(
                                     width: 18,
                                     height: 18,
-                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
                                   )
                                 : const Icon(Icons.print),
                             tooltip: 'Imprimir',
