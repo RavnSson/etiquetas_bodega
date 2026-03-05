@@ -17,7 +17,7 @@ class CatalogBridgeDatasource {
     ];
 
     final json = await BridgeRunner.runJson(
-      exePath: BridgePaths.mkBridgeExe(),
+      exePath: config.mkBridgePath ?? BridgePaths.mkBridgeExe(),
       args: args,
     );
 

@@ -22,7 +22,9 @@ class _CatalogScreenState extends State<CatalogScreen> {
   @override
   void initState() {
     super.initState();
-    //context.read<CatalogCubit>().load();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CatalogCubit>().load();
+    });
   }
 
   @override

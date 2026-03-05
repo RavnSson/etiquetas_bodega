@@ -4,13 +4,34 @@ import 'dart:io';
 class AppConfig {
   final bool offline;
 
-  const AppConfig({required this.offline});
+  /// Overrides opcionales para rutas de bridges (útil en Debug/Dev).
+  /// Si son null, se usan los fallbacks de BridgePaths.
+  final String? mkBridgePath;
+  final String? printBridgePath;
+  final String? printerName;
+
+  const AppConfig({
+    required this.offline,
+    this.mkBridgePath,
+    this.printBridgePath,
+    this.printerName,
+  });
 
   factory AppConfig.defaults() => const AppConfig(offline: true);
 
   factory AppConfig.fromJson(Map<String, dynamic> json) {
+    String? _readPath(String key) {
+      final v = json[key];
+      if (v == null) return null;
+      final s = v.toString().trim();
+      return s.isEmpty ? null : s;
+    }
+
     return AppConfig(
       offline: json['offline'] == true,
+      mkBridgePath: _readPath('mkBridgePath'),
+      printBridgePath: _readPath('printBridgePath'),
+      printerName: _readPath('printerName'),
     );
   }
 
@@ -55,7 +76,9 @@ class AppConfig {
     // 3) Si estás ejecutando desde /build/windows/... en debug raro, intenta subir
     // (Flutter project root suele ser donde está pubspec.yaml)
     out.add(Directory.current.uri.resolve('../app_config.json').toFilePath());
-    out.add(Directory.current.uri.resolve('../../app_config.json').toFilePath());
+    out.add(
+      Directory.current.uri.resolve('../../app_config.json').toFilePath(),
+    );
 
     return out.toList();
   }
